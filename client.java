@@ -1,47 +1,58 @@
 import java.io.*;
 import java.net.*;
 
-public class client
-{
-    Socket s;
-    DataInputStream din;
-    DataOutputStream dout;
-    public client(String serverAddress, int port) {
+public class client {
+    private Socket socket = null;
+    private DataInputStream in = null;
+    private DataOutputStream out = null;
+    private String inFromServer = "";
+    private String outToServer = "";
+    private BufferedReader reader = null;
+
+    public client(String hostname, int port) {
         try {
-            s = new Socket(serverAddress, port);
-            System.out.println(s);
-            din = new DataInputStream(s.getInputStream());
-            dout = new DataOutputStream(s.getOutputStream());
-            clientChat();
-        } catch(Exception e) {
+            socket = new Socket(hostname, port);
+            System.out.println("Connected to " + hostname + " on port " + port);
+
+            in = new DataInputStream(socket.getInputStream());
+            out = new DataOutputStream(socket.getOutputStream());
+            reader = new BufferedReader(new InputStreamReader(System.in));
+
+            while (!outToServer.equals("bye")) {
+                try {
+                    inFromServer = in.readUTF();
+                    System.out.println(inFromServer);
+                    outToServer = reader.readLine();
+                    out.writeUTF(outToServer);
+                }
+                catch (Exception e) {
+                    System.out.println(e);
+                }
+            }
+
+            socket.close();
+            out.close();
+            in.close();
+        } 
+        catch (UnknownHostException e) {
             System.out.println(e);
+            System.exit(-1);
+        }
+        catch (IOException e) {
+            System.out.println(e);
+            System.exit(-1);
         }
     }
 
-    public void clientChat() throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        String s1;
-        do {
-            s1 = br.readLine();
-            dout.writeUTF(s1);
-            dout.flush();
-            System.out.println("Server Message:" + din.readUTF());
-        } while (!s1.equals("stop"));
-    }
-
-    public static void main(String as[]) {
-        // Check if both server IP address and port number are provided as command-line arguments
-        if(as.length != 2) {
-            System.out.println("Usage: java Client <serverAddress> <port>");
-            return;
+    public static void main(String[] args) {
+        try {
+            String hostname = args[0];
+            int port = Integer.valueOf(args[1]);
+            client client = new client(hostname, port);
         }
-
-        // Parse server IP address and port number from command-line arguments
-        String serverAddress = as[0];
-        int port = Integer.parseInt(as[1]);
-
-        // Create client object with the provided server IP address and port number
-        new client(serverAddress, port);
+        catch (Exception e) {
+            System.out.println(e);
+            System.exit(-1);
+        }
     }
 }
-    
