@@ -1,7 +1,6 @@
 package cr;
 import java.io.*;
 import java.net.*;
-import java.nio.Buffer;
 
 public class client {
     private Socket socket = null;
