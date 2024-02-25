@@ -9,61 +9,79 @@ public class server {
     private DataOutputStream out = null;
     private String clientInput = "";
 
-
     public server(int port) {
         try {
+            // Setting up connection
             serverSocket = new ServerSocket(port);
             System.out.println("Created server on port " + port);
 
             socket = serverSocket.accept();
-            System.out.println("Client accepted on port " + port);
+            System.out.println("Client accepted with address " + socket.getInetAddress().toString() + " on port " + port);
 
-            in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+            // Initializing input/output streams
+            in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
             out.writeUTF("Hello!");
             
-            //clientInput = in.readUTF();
-
             boolean requestedJoke = false;
-            String fileName = "-1";
+            String fileName = "";
+
             while (!clientInput.equals("bye")) {
                 try {
                     clientInput = in.readUTF();
-                    if ((clientInput).equals("Joke 1")) {
-                        fileName = "sr/joke1.txt";
-                        requestedJoke = true;
-                    } else if ((clientInput).equals("Joke 2")) {
-                        fileName = "sr/joke2.txt";
-                        requestedJoke = true;
-                    } else if ((clientInput).equals("Joke 3")) {
-                        fileName = "sr/joke3.txt";
-                        requestedJoke = true;
+                    System.out.println("Received client request: " + clientInput);
+
+                    // Switch statement on input string
+                    switch (clientInput) {
+                        case "Joke 1":
+                            fileName = "sr/joke1.txt";
+                            requestedJoke = true;
+                            break;
+                        case "Joke 2":
+                            fileName = "sr/joke2.txt";
+                            requestedJoke = true;
+                            break;
+                        case "Joke 3":
+                            fileName = "sr/joke3.txt";
+                            requestedJoke = true;
+                            break;
+                        case "bye":
+                            continue;
+                        default:
+                            out.writeUTF("You are an idiot. Ask for a joke.");
+                            break;
                     }
-                    if (requestedJoke == true && fileName != "-1") {
-                        int ch;
-                        String jokeStr = "";
-                        FileReader joke = new FileReader(fileName);
-                        while ((ch = joke.read()) != -1) {
-                            jokeStr += (char)ch;
-                        }
-                        out.writeUTF(jokeStr);
-                        joke.close();
-                        fileName = "-1";
+
+                    // Send desired file to client
+                    if (requestedJoke == true) {
+                        out.writeUTF("Sending file " + fileName.substring(3, fileName.length()));
+                        File jokeFile = new File(fileName);
+                        byte[] fileBytes = new byte[(int) jokeFile.length()];
+                        FileInputStream fileIn = new FileInputStream(jokeFile);
+                        BufferedInputStream fileReader = new BufferedInputStream(fileIn);
+                        fileReader.read(fileBytes, 0, fileBytes.length);
+
+                        out.write(fileBytes, 0, fileBytes.length);
+                        fileIn.close();
+                        fileReader.close();
+
+                        fileName = "";
                         requestedJoke = false;
-                    } else {
-                        out.writeUTF("You are an idiot. Ask for a joke.");
                     }
-                } catch (IOException e) {
-                    System.out.println("Error reading input from client on port " 
-                        + port + ": " + e);
+                } catch (Exception e) {
+                    System.out.println(e);
                 }
             }
-            System.out.println("Received kill signal from client -- closing connection on port " + port);
-            socket.close();
+
+            // Close connection
+            System.out.println("Received disconnect signal from client address " + socket.getInetAddress().toString() + " on port " + port);
+            System.out.println("Exiting");
+            out.writeUTF("Disconnected");
             in.close();
             out.close();
-        } 
-        catch (IOException e) {
+            socket.close();
+            serverSocket.close();
+        } catch (Exception e) {
             System.out.println("Error listening on port " + port);
             System.exit(-1);
         }
@@ -73,7 +91,7 @@ public class server {
         try {
             int port = Integer.valueOf(args[0]);
             server s = new server(port);
-        } catch (Error e) {
+        } catch (Exception e) {
             System.out.println("Failed to capture command line arguments");
             System.exit(-1);
         }

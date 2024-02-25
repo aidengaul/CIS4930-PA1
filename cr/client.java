@@ -1,6 +1,7 @@
 package cr;
 import java.io.*;
 import java.net.*;
+import java.nio.Buffer;
 
 public class client {
     private Socket socket = null;
@@ -12,44 +13,49 @@ public class client {
 
     public client(String hostname, int port) {
         try {
+            // Setting up connection
+            System.out.println("Attempting to connect to " + hostname + " on port " + port);
             socket = new Socket(hostname, port);
-            System.out.println("Connected to " + hostname + " on port " + port);
+            System.out.println("Successfully connected to " + hostname + " on port " + port);
 
+            // Initializing input/output streams
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
             reader = new BufferedReader(new InputStreamReader(System.in));
 
+            inFromServer = in.readUTF();
+            System.out.println("Received server response: " + inFromServer);
+
             while (!outToServer.equals("bye")) {
                 try {
-                    inFromServer = in.readUTF();
-                    System.out.println(inFromServer);
+                    System.out.print("Client message to server: ");
                     outToServer = reader.readLine();
                     out.writeUTF(outToServer);
-                    inFromServer = in.readUTF(); //get server's response
-                    //create filewriter to make joke1.txt
-                    FileWriter joke = new FileWriter("cr/joke1.txt"); 
-                    //write server response into file
-                    for (int i = 0; i < inFromServer.length(); i++) {
-                        joke.write(inFromServer.charAt(i)); 
+                    out.flush();
+
+                    inFromServer = in.readUTF();
+                    System.out.println("Received server response: " + inFromServer);
+
+                    if (inFromServer.contains("Sending file")) {
+                        byte[] fileBytes = new byte[1024];
+                        FileOutputStream fileOut = new FileOutputStream("./cr/" + inFromServer.substring(inFromServer.length() - 9 , inFromServer.length()));
+                        BufferedOutputStream fileWriter = new BufferedOutputStream(fileOut);
+                        int totalBytes = in.read(fileBytes, 0, fileBytes.length);
+                        fileWriter.write(fileBytes, 0, totalBytes);
+                        fileWriter.close();
+                        fileOut.close();
                     }
-                    joke.close(); //close file
-                    System.out.println(inFromServer); //TODO
-                    System.out.println("wrote file. look in cr directory"); //TODO
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     System.out.println(e);
                 }
             }
 
-            socket.close();
+            // Close connection
+            System.out.println("Exiting");
             out.close();
             in.close();
-        } 
-        catch (UnknownHostException e) {
-            System.out.println(e);
-            System.exit(-1);
-        }
-        catch (IOException e) {
+            socket.close();
+        } catch (Exception e) {
             System.out.println(e);
             System.exit(-1);
         }
@@ -60,8 +66,7 @@ public class client {
             String hostname = args[0];
             int port = Integer.valueOf(args[1]);
             client client = new client(hostname, port);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println(e);
             System.exit(-1);
         }
