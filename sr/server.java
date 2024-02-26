@@ -1,5 +1,6 @@
 package sr;
 import java.io.*;
+import java.lang.*;
 import java.net.*;
 
 public class server {
@@ -29,20 +30,23 @@ public class server {
             while (!clientInput.equals("bye")) {
                 try {
                     clientInput = in.readUTF();
-                    System.out.println("Received client request: " + clientInput);
+                    System.out.println("Client requested: " + clientInput);
 
                     // Switch statement on input string
                     switch (clientInput) {
                         case "Joke 1":
                             fileName = "sr/joke1.txt";
+                            System.out.println("returning: \"joke1.txt\" file");
                             requestedJoke = true;
                             break;
                         case "Joke 2":
                             fileName = "sr/joke2.txt";
+                            System.out.println("returning: \"joke2.txt\" file");
                             requestedJoke = true;
                             break;
                         case "Joke 3":
                             fileName = "sr/joke3.txt";
+                            System.out.println("returning: \"joke3.txt\" file");
                             requestedJoke = true;
                             break;
                         case "bye":
@@ -86,7 +90,6 @@ public class server {
             System.exit(-1);
         }
     }
-
     public static void main(String[] args) {
         try {
             int port = Integer.valueOf(args[0]);

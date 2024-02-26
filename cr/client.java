@@ -23,11 +23,11 @@ public class client {
             reader = new BufferedReader(new InputStreamReader(System.in));
 
             inFromServer = in.readUTF();
-            System.out.println("Received server response: " + inFromServer);
+            System.out.println("Received from server: " + inFromServer);
 
             while (!outToServer.equals("bye")) {
                 try {
-                    System.out.print("Client message to server: ");
+                    System.out.print("Request server for: ");
                     outToServer = reader.readLine();
                     out.writeUTF(outToServer);
                     out.flush();
