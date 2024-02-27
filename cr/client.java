@@ -52,7 +52,7 @@ public class client {
             }
 
             // Close connection
-            System.out.println("Exit");
+            System.out.println("Exiting");
             out.close();
             in.close();
             socket.close();

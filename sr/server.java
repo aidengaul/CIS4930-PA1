@@ -52,7 +52,7 @@ public class server {
                         case "bye":
                             continue;
                         default:
-                            out.writeUTF("Error: There is no matching file. Please request a joke.");
+                            out.writeUTF("Error: Please enter Joke + a number 1-3 to receive a joke");
                             break;
                     }
 
