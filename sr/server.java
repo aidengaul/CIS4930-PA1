@@ -17,7 +17,7 @@ public class server {
             System.out.println("Created server on port " + port);
 
             socket = serverSocket.accept();
-            System.out.println("Client accepted with address " + socket.getInetAddress().toString() + " on port " + port);
+            System.out.println("Got connection address from " + socket.getInetAddress().toString() + " on port " + port);
 
             // Initializing input/output streams
             in = new DataInputStream(socket.getInputStream());
@@ -52,7 +52,7 @@ public class server {
                         case "bye":
                             continue;
                         default:
-                            out.writeUTF("You are an idiot. Ask for a joke.");
+                            out.writeUTF("Error: There is no matching file. Please request a joke.");
                             break;
                     }
 
@@ -93,6 +93,7 @@ public class server {
     public static void main(String[] args) {
         try {
             int port = Integer.valueOf(args[0]);
+            //Call server function with given port argument to initialize server/server sockets
             server s = new server(port);
         } catch (Exception e) {
             System.out.println("Failed to capture command line arguments");

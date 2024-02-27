@@ -22,6 +22,7 @@ public class client {
             out = new DataOutputStream(socket.getOutputStream());
             reader = new BufferedReader(new InputStreamReader(System.in));
 
+            //Server sends "Hello!" to ensure connection is established before client can send a message
             inFromServer = in.readUTF();
             System.out.println("Received from server: " + inFromServer);
 
@@ -34,7 +35,8 @@ public class client {
 
                     inFromServer = in.readUTF();
                     System.out.println("Received server response: " + inFromServer);
-
+                    
+                    //Write joke file received from server to cr directory
                     if (inFromServer.contains("Sending file")) {
                         byte[] fileBytes = new byte[1024];
                         FileOutputStream fileOut = new FileOutputStream("./cr/" + inFromServer.substring(inFromServer.length() - 9 , inFromServer.length()));
@@ -50,7 +52,7 @@ public class client {
             }
 
             // Close connection
-            System.out.println("Exiting");
+            System.out.println("Exit");
             out.close();
             in.close();
             socket.close();
@@ -64,6 +66,7 @@ public class client {
         try {
             String hostname = args[0];
             int port = Integer.valueOf(args[1]);
+            //Call client function with given port and hostname arguments to initialize client/client socket
             client client = new client(hostname, port);
         } catch (Exception e) {
             System.out.println(e);
