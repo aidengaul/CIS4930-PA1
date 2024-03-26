@@ -33,7 +33,7 @@ public class client {
             String sentence = reader.readLine();
             sendData = sentence.getBytes();
 
-            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, 4451); //TODO port
+            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port); //TODO port
             socket.send(sendPacket);
 
             DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
@@ -79,6 +79,13 @@ public class client {
             System.out.println(e);
             System.exit(-1);
         }
+    }
+
+    public int getRandomNum() {
+        int min = 1;
+        int max = 10;
+
+        return min + (int)(Math.random() * (max - min) + 1);
     }
 
     public static void main(String[] args) {
