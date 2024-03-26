@@ -4,8 +4,8 @@ import java.lang.*;
 import java.net.*;
 
 public class server {
-    private Socket socket = null;
-    private ServerSocket serverSocket = null;
+    private DatagramSocket socket = null;
+    //private ServerSocket serverSocket = null;
     private DataInputStream in = null;
     private DataOutputStream out = null;
     private String clientInput = "";
@@ -13,17 +13,33 @@ public class server {
     public server(int port) {
         try {
             // Setting up connection
-            serverSocket = new ServerSocket(port);
-            System.out.println("Created server on port " + port);
+            //serverSocket = new ServerSocket(port);
+            //System.out.println("Created server on port " + port);
 
-            socket = serverSocket.accept();
-            System.out.println("Got connection address from " + socket.getInetAddress().toString() + " on port " + port);
+            //socket = serverSocket.accept();
+            socket = new DatagramSocket(port);
+            //System.out.println("Got connection address from " + socket.getInetAddress().toString() + " on port " + port);
 
             // Initializing input/output streams
-            in = new DataInputStream(socket.getInputStream());
-            out = new DataOutputStream(socket.getOutputStream());
-            out.writeUTF("Hello!");
-            
+            //in = new DataInputStream(socket.getInputStream());
+            //out = new DataOutputStream(socket.getOutputStream());
+            //out.writeUTF("Hello!");
+            byte[] receiveData = new byte[1024];
+            byte[] sendData = new byte[1024];
+
+            while(true) {
+                DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+                socket.receive(receivePacket);
+                String sentence = new String(receivePacket.getData());
+                InetAddress IPAddress = receivePacket.getAddress();
+                int clientPort = receivePacket.getPort();
+
+                String responseToClient = sentence.toUpperCase();
+
+                sendData = responseToClient.getBytes();
+                DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, clientPort);
+            }
+            /*
             boolean requestedJoke = false;
             String fileName = "";
 
@@ -85,6 +101,7 @@ public class server {
             out.close();
             socket.close();
             serverSocket.close();
+            */
         } catch (Exception e) {
             System.out.println("Error listening on port " + port);
             System.exit(-1);
