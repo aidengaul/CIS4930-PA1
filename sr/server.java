@@ -27,7 +27,8 @@ public class server {
             byte[] receiveData = new byte[1024];
             byte[] sendData = new byte[1024];
 
-            while(true) {
+            int i = 3;
+            while(i != 0) {
                 DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
                 socket.receive(receivePacket);
                 String sentence = new String(receivePacket.getData());
@@ -38,7 +39,10 @@ public class server {
 
                 sendData = responseToClient.getBytes();
                 DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, clientPort);
+                socket.send(sendPacket);
+                i--;
             }
+            socket.close();
             /*
             boolean requestedJoke = false;
             String fileName = "";

@@ -33,7 +33,7 @@ public class client {
             String sentence = reader.readLine();
             sendData = sentence.getBytes();
 
-            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
+            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, 4451); //TODO port
             socket.send(sendPacket);
 
             DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
