@@ -30,16 +30,33 @@ public class client {
             byte[] sendData = new byte[1024];
             byte[] receiveData = new byte[1024];
 
-            String sentence = reader.readLine();
-            sendData = sentence.getBytes();
+            while (!outToServer.equals("bye")) {
+                //process request
+                System.out.print("Request server for: ");
+                outToServer = reader.readLine();
+                sendData = outToServer.getBytes();
+                //create packet to send out
+                DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port); //TODO port
+                socket.send(sendPacket);
+                //receive packet
+                DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+                socket.receive(receivePacket);
+                System.out.println("Received file from server");
+                //process file from server
+                byte[] responseFromServer = receivePacket.getData();
+                byte[] fileBytes = new byte[1024];
+                FileOutputStream fileOut = new FileOutputStream("./cr/" + inFromServer.substring(inFromServer.length() - 9 , inFromServer.length()));
+                BufferedOutputStream fileWriter = new BufferedOutputStream(fileOut);
+                int totalBytes = response.read(fileBytes, 0, fileBytes.length);
+                fileWriter.write(fileBytes, 0, totalBytes);
+                fileWriter.close();
+                fileOut.close();
 
-            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port); //TODO port
-            socket.send(sendPacket);
+            }
 
-            DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-            socket.receive(receivePacket);
+            
 
-            String responseFromServer = new String(receivePacket.getData());
+            
 
             System.out.println("from server " + responseFromServer);
             socket.close();
