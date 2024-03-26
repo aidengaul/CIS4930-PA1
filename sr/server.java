@@ -25,24 +25,39 @@ public class server {
             //out = new DataOutputStream(socket.getOutputStream());
             //out.writeUTF("Hello!");
             byte[] receiveData = new byte[1024];
-            byte[] sendData = new byte[1024];
+            byte[] sendData;
 
             int i = 3;
-            while(i != 0) {
+            while(true) {
                 DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
                 socket.receive(receivePacket);
                 String sentence = new String(receivePacket.getData());
                 InetAddress IPAddress = receivePacket.getAddress();
+                System.out.println(IPAddress);
                 int clientPort = receivePacket.getPort();
+                String fileName = "sr/memes/meme" + sentence + ".jpg"; 
+                System.out.println(fileName);
+                File file = new File(fileName);
+                sendData = new byte[(int) (file.length())];
 
-                String responseToClient = sentence.toUpperCase();
+                try {
+                    FileInputStream fileIn = new FileInputStream(file);
+                    sendData = fileIn.readAllBytes();
+                }
+                catch (FileNotFoundException f) {
+                    System.out.println("Cannot find file");
+                    System.exit(-1);
+                }
+                catch (Exception e) {
+                    System.out.println("Failed to read file");
+                    System.exit(-1);
+                }
 
-                sendData = responseToClient.getBytes();
                 DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, clientPort);
                 socket.send(sendPacket);
                 i--;
             }
-            socket.close();
+            //socket.close();
             /*
             boolean requestedJoke = false;
             String fileName = "";
