@@ -10,6 +10,7 @@ public class client {
     private String inFromServer = "";
     private String outToServer = "";
     private BufferedReader reader = null;
+    private int[] randArray = new int[10];
 
     public client(InetAddress IPAddress, int port) {
         try {
@@ -33,7 +34,8 @@ public class client {
             while (!outToServer.equals("bye")) {
                 //process request
                 System.out.print("Request server for: ");
-                outToServer = reader.readLine();
+                int memeNum = getRandomNum();
+                outToServer += memeNum;
                 sendData = outToServer.getBytes();
                 //create packet to send out
                 DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port); //TODO port
@@ -44,21 +46,20 @@ public class client {
                 System.out.println("Received file from server");
                 //process file from server
                 byte[] responseFromServer = receivePacket.getData();
-                byte[] fileBytes = new byte[1024];
-                FileOutputStream fileOut = new FileOutputStream("./cr/" + inFromServer.substring(inFromServer.length() - 9 , inFromServer.length()));
+                // byte[] fileBytes = new byte[1024];
+                FileOutputStream fileOut = new FileOutputStream("./cr/memes/meme" + memeNum + ".jpg");
                 BufferedOutputStream fileWriter = new BufferedOutputStream(fileOut);
-                int totalBytes = response.read(fileBytes, 0, fileBytes.length);
-                fileWriter.write(fileBytes, 0, totalBytes);
+                //int totalBytes = response.read(fileBytes, 0, responseFromServer.length);
+                fileWriter.write(responseFromServer, 0, responseFromServer.length);
                 fileWriter.close();
                 fileOut.close();
-
             }
 
             
 
             
 
-            System.out.println("from server " + responseFromServer);
+            //System.out.println("from server " + responseFromServer);
             socket.close();
             /* 
             while (!outToServer.equals("bye")) {
@@ -101,8 +102,14 @@ public class client {
     public int getRandomNum() {
         int min = 1;
         int max = 10;
+        int num = min + (int)(Math.random() * (max - min));
 
-        return min + (int)(Math.random() * (max - min) + 1);
+        while (randArray[num] == 1) {
+            num = min + (int)(Math.random() * (max - min));
+        }
+        randArray[num] = 1;
+
+        return num;
     }
 
     public static void main(String[] args) {
