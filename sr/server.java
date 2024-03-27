@@ -13,7 +13,7 @@ public class server {
     public server(int port) {
         try {
             // Setting up connection
-            serverSocket = new ServerSocket(port); //TODO port
+            serverSocket = new ServerSocket(port);
             System.out.println("Created server on port " + port);
 
             socket = serverSocket.accept();

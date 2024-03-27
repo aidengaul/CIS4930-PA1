@@ -27,7 +27,7 @@ public class client {
             inFromServer = in.readUTF();
             System.out.println("Received from server: " + inFromServer);
 
-            for (int i = 0; i < 1; i++) { //TODO 10
+            for (int i = 0; i < 10; i++) {
                 try {
                     int memeNum = getRandomNum();
                     System.out.print("Request server for: " + memeNum + "\n");
@@ -40,7 +40,7 @@ public class client {
                     
                     //Write joke file received from server to cr directory
                     if (inFromServer.contains("Sending file")) {
-                        byte[] fileBytes = new byte[600000]; //TODO 1024
+                        byte[] fileBytes = new byte[65000];
                         FileOutputStream fileOut = new FileOutputStream("./cr/" + inFromServer.substring(inFromServer.length() - 9 , inFromServer.length()));
                         BufferedOutputStream fileWriter = new BufferedOutputStream(fileOut);
                         int totalBytes = in.read(fileBytes, 0, fileBytes.length);
