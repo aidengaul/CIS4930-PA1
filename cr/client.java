@@ -27,12 +27,12 @@ public class client {
 
             while (receiveMemes < 10) { 
                 //process request
-                System.out.print("Request server for: ");
                 int memeNum = getRandomNum();
-                outToServer += memeNum;
+                System.out.print("Request server for: " + memeNum + "\n");
+                outToServer = String.valueOf(memeNum); //send number 1-10 to server
                 sendData = outToServer.getBytes();
                 //create packet to send out
-                DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port); //TODO port
+                DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, 5566); //TODO port
                 socket.send(sendPacket);
                 //receive packet
                 DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
@@ -63,14 +63,14 @@ public class client {
     }
 
     public int getRandomNum() {
-        int min = 1;
+        int min = 0;
         int max = 10;
         int num = min + (int)(Math.random() * (max - min)+1);
 
-        while (randArray[num] == 1) {
+        while (randArray[num - 1] == 1) {
             num = min + (int)(Math.random() * (max - min)+1);
         }
-        randArray[num] = 1;
+        randArray[num - 1] = 1;
 
         receiveMemes++;
         return num;
