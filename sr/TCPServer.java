@@ -3,14 +3,14 @@ import java.io.*;
 import java.lang.*;
 import java.net.*;
 
-public class server {
+public class TCPServer {
     private Socket socket = null;
     private ServerSocket serverSocket = null;
     private DataInputStream in = null;
     private DataOutputStream out = null;
     private String clientInput = "";
 
-    public server(int port) {
+    public TCPServer(int port) {
         try {
             // Setting up connection
             serverSocket = new ServerSocket(port);
@@ -129,7 +129,7 @@ public class server {
         try {
             int port = Integer.valueOf(args[0]);
             //Call server function with given port argument to initialize server/server sockets
-            server s = new server(port);
+            TCPServer s = new TCPServer(port);
         } catch (Exception e) {
             System.out.println("Failed to capture command line arguments");
             System.exit(-1);

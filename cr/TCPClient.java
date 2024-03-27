@@ -2,7 +2,7 @@ package cr;
 import java.io.*;
 import java.net.*;
 
-public class client {
+public class TCPClient {
     private Socket socket = null;
     private DataInputStream in = null;
     private DataOutputStream out = null;
@@ -11,7 +11,7 @@ public class client {
     private BufferedReader reader = null;
     private int[] randArray = new int[10];
 
-    public client(String hostname, int port) {
+    public TCPClient(String hostname, int port) {
         try {
             // Setting up connection
             System.out.println("Attempting to connect to " + hostname + " on port " + port);
@@ -84,7 +84,7 @@ public class client {
             String hostname = args[0];
             int port = Integer.valueOf(args[1]);
             //Call client function with given port and hostname arguments to initialize client/client socket
-            client client = new client(hostname, port);
+            TCPClient client = new TCPClient(hostname, port);
         } catch (Exception e) {
             System.out.println(e);
             System.exit(-1);
