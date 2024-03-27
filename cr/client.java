@@ -11,6 +11,7 @@ public class client {
     private String outToServer = "";
     private BufferedReader reader = null;
     private int[] randArray = new int[10];
+    private int receiveMemes = 0;  
 
     public client(InetAddress IPAddress, int port) {
         try {
@@ -19,19 +20,12 @@ public class client {
             socket = new DatagramSocket(port);
             System.out.println("Successfully connected to " + IPAddress + " on port " + port);
 
-            // Initializing input/output streams
-            //in = new DataInputStream(socket.getInputStream());
-            //out = new DataOutputStream(socket.getOutputStream());
             reader = new BufferedReader(new InputStreamReader(System.in));
 
-            //Server sends "Hello!" to ensure connection is established before client can send a message
-            //inFromServer = in.readUTF();
-            //System.out.println("Received from server: " + inFromServer);
-
             byte[] sendData = new byte[1024];
-            byte[] receiveData = new byte[1024];
+            byte[] receiveData = new byte[65000];
 
-            while (!outToServer.equals("bye")) {
+            while (receiveMemes < 10) { 
                 //process request
                 System.out.print("Request server for: ");
                 int memeNum = getRandomNum();
@@ -55,60 +49,30 @@ public class client {
                 fileOut.close();
             }
 
-            
-
-            
-
-            //System.out.println("from server " + responseFromServer);
             socket.close();
-            /* 
-            while (!outToServer.equals("bye")) {
-                try {
-                    System.out.print("Request server for: ");
-                    outToServer = reader.readLine();
-                    out.writeUTF(outToServer);
-                    out.flush();
-
-                    inFromServer = in.readUTF();
-                    System.out.println("Received server response: " + inFromServer);
-                    
-                    //Write joke file received from server to cr directory
-                    if (inFromServer.contains("Sending file")) {
-                        byte[] fileBytes = new byte[1024];
-                        FileOutputStream fileOut = new FileOutputStream("./cr/" + inFromServer.substring(inFromServer.length() - 9 , inFromServer.length()));
-                        BufferedOutputStream fileWriter = new BufferedOutputStream(fileOut);
-                        int totalBytes = in.read(fileBytes, 0, fileBytes.length);
-                        fileWriter.write(fileBytes, 0, totalBytes);
-                        fileWriter.close();
-                        fileOut.close();
-                    }
-                } catch (Exception e) {
-                    System.out.println(e);
-                }
-            }
-
-            // Close connection
-            System.out.println("Exiting");
-            out.close();
-            in.close();
-            socket.close();
-            */
+           
         } catch (Exception e) {
             System.out.println(e);
             System.exit(-1);
+        }finally {
+            // Ensure the socket is closed
+            if (socket != null) {
+                socket.close();
+            }
         }
     }
 
     public int getRandomNum() {
         int min = 1;
         int max = 10;
-        int num = min + (int)(Math.random() * (max - min));
+        int num = min + (int)(Math.random() * (max - min)+1);
 
         while (randArray[num] == 1) {
-            num = min + (int)(Math.random() * (max - min));
+            num = min + (int)(Math.random() * (max - min)+1);
         }
         randArray[num] = 1;
 
+        receiveMemes++;
         return num;
     }
 
