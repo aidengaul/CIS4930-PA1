@@ -4,7 +4,7 @@ import java.io.*;
 import java.lang.*;
 import java.net.*;
 
-public class server {
+public class UDPServer {
     private DatagramSocket socket = null;
     // private ServerSocket serverSocket = null;
     private DataInputStream in = null;
@@ -12,7 +12,7 @@ public class server {
     private String clientInput = "";
     private int sentMemes = 0;
 
-    public server(int port) {
+    public UDPServer(int port) {
         try {
             // Setting up connection
             // serverSocket = new ServerSocket(port);
@@ -92,7 +92,7 @@ public class server {
             int port = Integer.valueOf(args[0]);
             // Call server function with given port argument to initialize server/server
             // sockets
-            server s = new server(port);
+            UDPServer s = new UDPServer(port);
         } catch (Exception e) {
             System.out.println("Failed to capture command line arguments");
             System.exit(-1);

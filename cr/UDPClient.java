@@ -2,7 +2,7 @@ package cr;
 import java.io.*;
 import java.net.*;
 
-public class client {
+public class UDPClient {
     private DatagramSocket socket = null;
     //private DataInputStream in = null;
     private BufferedReader in = null;
@@ -13,7 +13,7 @@ public class client {
     private int[] randArray = new int[10];
     private int receiveMemes = 0;  
 
-    public client(InetAddress IPAddress, int port) {
+    public UDPClient(InetAddress IPAddress, int port) {
         try {
             // Setting up connection
             System.out.println("Attempting to connect to " + IPAddress + " on port " + port);
@@ -82,7 +82,7 @@ public class client {
             InetAddress IPAddress = InetAddress.getByName(hostname);
             int port = Integer.valueOf(args[1]);
             //Call client function with given port and hostname arguments to initialize client/client socket
-            client client = new client(IPAddress, port);
+            UDPClient client = new UDPClient(IPAddress, port);
         } catch (Exception e) {
             System.out.println(e);
             System.exit(-1);
