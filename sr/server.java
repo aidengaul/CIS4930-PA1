@@ -13,7 +13,7 @@ public class server {
     public server(int port) {
         try {
             // Setting up connection
-            serverSocket = new ServerSocket(port);
+            serverSocket = new ServerSocket(port); //TODO port
             System.out.println("Created server on port " + port);
 
             socket = serverSocket.accept();
@@ -34,19 +34,54 @@ public class server {
 
                     // Switch statement on input string
                     switch (clientInput) {
-                        case "Joke 1":
-                            fileName = "sr/joke1.txt";
-                            System.out.println("returning: \"joke1.txt\" file");
+                        case "1":
+                            fileName = "sr/memes/meme1.jpg";
+                            System.out.println("returning: \"sr/memes/meme1.jpg\" file");
                             requestedJoke = true;
                             break;
-                        case "Joke 2":
-                            fileName = "sr/joke2.txt";
-                            System.out.println("returning: \"joke2.txt\" file");
+                        case "2":
+                            fileName = "sr/memes/meme2.jpg";
+                            System.out.println("returning: \"sr/memes/meme2.jpg\" file");
                             requestedJoke = true;
                             break;
-                        case "Joke 3":
-                            fileName = "sr/joke3.txt";
-                            System.out.println("returning: \"joke3.txt\" file");
+                        case "3":
+                            fileName = "sr/memes/meme3.jpg";
+                            System.out.println("returning: \"sr/memes/meme3.jpg\" file");
+                            requestedJoke = true;
+                            break;
+                        case "4":
+                            fileName = "sr/memes/meme4.jpg";
+                            System.out.println("returning: \"sr/memes/meme4.jpg\" file");
+                            requestedJoke = true;
+                            break;
+                        case "5":
+                            fileName = "sr/memes/meme5.jpg";
+                            System.out.println("returning: \"sr/memes/meme5.jpg\" file");
+                            requestedJoke = true;
+                            break;
+                        case "6":
+                            fileName = "sr/memes/meme6.jpg";
+                            System.out.println("returning: \"sr/memes/meme6.jpg\" file");
+                            requestedJoke = true;
+                            break;
+                        case "7":
+                            fileName = "sr/memes/meme7.jpg";
+                            System.out.println("returning: \"sr/memes/meme7.jpg\" file");
+                            requestedJoke = true;
+                            break;
+                        case "8":
+                            fileName = "sr/memes/meme8.jpg";
+                            System.out.println("returning: \"sr/memes/meme8.jpg\" file");
+                            requestedJoke = true;
+                            break;
+                        case "9":
+                            fileName = "sr/memes/meme9.jpg";
+                            System.out.println("returning: \"sr/memes/meme9.jpg\" file");
+                            requestedJoke = true;
+                            break;
+                        case "10":
+                            fileName = "sr/memes/meme10.jpg";
+                            System.out.println("returning: \"sr/memes/meme10.jpg\" file");
                             requestedJoke = true;
                             break;
                         case "bye":

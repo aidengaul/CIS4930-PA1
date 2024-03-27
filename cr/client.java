@@ -9,6 +9,7 @@ public class client {
     private String inFromServer = "";
     private String outToServer = "";
     private BufferedReader reader = null;
+    private int[] randArray = new int[10];
 
     public client(String hostname, int port) {
         try {
@@ -26,10 +27,11 @@ public class client {
             inFromServer = in.readUTF();
             System.out.println("Received from server: " + inFromServer);
 
-            while (!outToServer.equals("bye")) {
+            for (int i = 0; i < 1; i++) { //TODO 10
                 try {
-                    System.out.print("Request server for: ");
-                    outToServer = reader.readLine();
+                    int memeNum = getRandomNum();
+                    System.out.print("Request server for: " + memeNum + "\n");
+                    outToServer = String.valueOf(memeNum); //send number 1-10 to server
                     out.writeUTF(outToServer);
                     out.flush();
 
@@ -38,7 +40,7 @@ public class client {
                     
                     //Write joke file received from server to cr directory
                     if (inFromServer.contains("Sending file")) {
-                        byte[] fileBytes = new byte[1024];
+                        byte[] fileBytes = new byte[600000]; //TODO 1024
                         FileOutputStream fileOut = new FileOutputStream("./cr/" + inFromServer.substring(inFromServer.length() - 9 , inFromServer.length()));
                         BufferedOutputStream fileWriter = new BufferedOutputStream(fileOut);
                         int totalBytes = in.read(fileBytes, 0, fileBytes.length);
@@ -50,6 +52,8 @@ public class client {
                     System.out.println(e);
                 }
             }
+            out.writeUTF("bye");
+            out.flush();
 
             // Close connection
             System.out.println("Exiting");
@@ -60,6 +64,19 @@ public class client {
             System.out.println(e);
             System.exit(-1);
         }
+    }
+
+    public int getRandomNum() {
+        int min = 1;
+        int max = 10;
+        int num = min + (int)(Math.random() * (max - min));
+
+        while (randArray[num] == 1) {
+            num = min + (int)(Math.random() * (max - min));
+        }
+        randArray[num] = 1;
+
+        return num;
     }
 
     public static void main(String[] args) {
