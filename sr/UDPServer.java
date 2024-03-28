@@ -14,19 +14,8 @@ public class UDPServer {
 
     public UDPServer(int port) {
         try {
-            // Setting up connection
-            // serverSocket = new ServerSocket(port);
-            // System.out.println("Created server on port " + port);
-
-            // socket = serverSocket.accept();
             socket = new DatagramSocket(port);
-            // System.out.println("Got connection address from " +
-            // socket.getInetAddress().toString() + " on port " + port);
 
-            // Initializing input/output streams
-            // in = new DataInputStream(socket.getInputStream());
-            // out = new DataOutputStream(socket.getOutputStream());
-            // out.writeUTF("Hello!");
             byte[] receiveData = new byte[1024];
             byte[] sendData;
             while (sentMemes < 10) {
@@ -92,7 +81,9 @@ public class UDPServer {
             int port = Integer.valueOf(args[0]);
             // Call server function with given port argument to initialize server/server
             // sockets
-            UDPServer s = new UDPServer(port);
+            for (int i = 0; i < 10; i++) {
+                UDPServer s = new UDPServer(port);
+            }
         } catch (Exception e) {
             System.out.println("Failed to capture command line arguments");
             System.exit(-1);
