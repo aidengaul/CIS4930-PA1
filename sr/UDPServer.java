@@ -94,6 +94,7 @@ public class UDPServer {
         }
         sdMemes = Math.sqrt(sdMemes / 100);
 
+        System.out.println();
         System.out.println("Summary statistics for sending an image across 10 trials:");
         System.out.println("Min: " + memeStats.getMin() + " nanoseconds");
         System.out.println("Max: " + memeStats.getMax() + " nanoseconds");

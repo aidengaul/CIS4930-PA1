@@ -114,13 +114,14 @@ public class UDPClient {
             sdTotals = Math.pow(num - totalStats.getAverage(), 2);
         }
         sdTotals = Math.sqrt(sdTotals / 10);
-
+        
+        System.out.println();
         System.out.println("Summary statistics for resolving an image across 10 trials:");
         System.out.println("Min: " + memeStats.getMin() + " nanoseconds");
         System.out.println("Max: " + memeStats.getMax() + " nanoseconds");
         System.out.println("Average: " + memeStats.getAverage() + " nanoseconds");
         System.out.println("Standard Deviation: " + sdMemes + " nanoseconds");
-
+        System.out.println();
         System.out.println("Summary statistics for total run times across 10 trials");
         System.out.println("Min: " + totalStats.getMin() + " nanoseconds");
         System.out.println("Max: " + totalStats.getMax() + " nanoseconds");
