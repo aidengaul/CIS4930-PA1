@@ -4,6 +4,8 @@ import java.lang.*;
 import java.net.*;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.LongSummaryStatistics;
 
 public class TCPServer {
     private Socket socket = null;
@@ -11,7 +13,7 @@ public class TCPServer {
     private DataInputStream in = null;
     private DataOutputStream out = null;
     private String clientInput = "";
-    private long[] retreiveTime3Array = new long[100];
+    private static long[] retreiveTime3Array = new long[100];
     private int retreiveTime3ArrayIndex = 0;
 
     public TCPServer(int port) {
@@ -33,7 +35,7 @@ public class TCPServer {
 
             while (!clientInput.equals("bye")) {
                 try {
-                    Instant start = Instant.now();
+                    Instant start = Instant.now(); //local retreival (3)
                     clientInput = in.readUTF();
                     System.out.println("Client requested: " + clientInput);
 
@@ -112,12 +114,12 @@ public class TCPServer {
                         fileName = "";
                         requestedJoke = false;
 
-                        Instant end = Instant.now();
-                        Duration timeElapsed = Duration.between(start, end);
-                        long timeElapsedNanos = timeElapsed.toNanos();
-                        System.out.println(timeElapsedNanos + " x 10^(-6) milliseconds \n");
-                        retreiveTime3Array[retreiveTime3ArrayIndex] = timeElapsedNanos;
-                        retreiveTime3ArrayIndex++;
+                        Instant end = Instant.now(); //local retreival (3)
+                        Duration timeElapsed = Duration.between(start, end); //local retreival (3)
+                        long timeElapsedNanos = timeElapsed.toNanos(); //local retreival (3)
+                        System.out.println(timeElapsedNanos + " x 10^(-6) milliseconds \n"); //local retreival (3)
+                        retreiveTime3Array[retreiveTime3ArrayIndex] = timeElapsedNanos; //local retreival (3)
+                        retreiveTime3ArrayIndex++; //local retreival (3)
                     }
                 } catch (Exception e) {
                     System.out.println(e);
@@ -137,11 +139,31 @@ public class TCPServer {
             System.exit(-1);
         }
     }
+
+    public static void getTestStats() {
+        LongSummaryStatistics memeStats = Arrays.stream(retreiveTime3Array).summaryStatistics();
+        double sdMemes = 0;
+
+        for (long num : retreiveTime3Array) {
+            sdMemes += Math.pow(num - memeStats.getAverage(), 2);
+        }
+        sdMemes = Math.sqrt(sdMemes / 100);
+
+        System.out.println("Summary statistics for resolving an image across 10 trials:");
+        System.out.println("Min: " + memeStats.getMin() + " nanoseconds");
+        System.out.println("Max: " + memeStats.getMax() + " nanoseconds");
+        System.out.println("Average: " + memeStats.getAverage() + " nanoseconds");
+        System.out.println("Standard Deviation: " + sdMemes + " nanoseconds");
+    }
     public static void main(String[] args) {
         try {
             int port = Integer.valueOf(args[0]);
             //Call server function with given port argument to initialize server/server sockets
-            TCPServer s = new TCPServer(port);
+            for (int i = 0; i < 10; i++) {
+                TCPServer s = new TCPServer(port);
+            }
+            getTestStats();
+            
         } catch (Exception e) {
             System.out.println("Failed to capture command line arguments");
             System.exit(-1);
