@@ -32,7 +32,7 @@ public class UDPClient {
                 outToServer = String.valueOf(memeNum); //send number 1-10 to server
                 sendData = outToServer.getBytes();
                 //create packet to send out
-                DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, 5566); //TODO port
+                DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port); //TODO port
                 socket.send(sendPacket);
                 //receive packet
                 DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
