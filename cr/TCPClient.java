@@ -1,6 +1,8 @@
 package cr;
 import java.io.*;
 import java.net.*;
+import java.time.Duration;
+import java.time.Instant;
 
 public class TCPClient {
     private Socket socket = null;
@@ -11,6 +13,7 @@ public class TCPClient {
     private BufferedReader reader = null;
     private int[] randArray = new int[10];
     private int receiveMemes = 0;
+    private long[] retreiveTime1Array = new long[10];
 
     public TCPClient(String hostname, int port) {
         try {
@@ -27,9 +30,19 @@ public class TCPClient {
             //Server sends "Hello!" to ensure connection is established before client can send a message
             inFromServer = in.readUTF();
             System.out.println("Received from server: " + inFromServer);
-
+            /* 
+            Instant start = Instant.now();
+            for (int i = 0; i < 5; i++) {
+                System.out.println("sleeping"); 
+            }  
+            Instant end = Instant.now();
+            Duration timeElapsed = Duration.between(start, end);
+            long timeElapsedMillis = timeElapsed.toNanos();
+            System.out.println(timeElapsedMillis + " x 10^(-6) milliseconds"); 
+            */
             while(receiveMemes < 10) {
                 try {
+                    Instant start = Instant.now();
                     int memeNum = getRandomNum();
                     System.out.print("Request server for: " + memeNum + "\n");
                     //System.out.print("i: " + i + "\n");
@@ -52,6 +65,11 @@ public class TCPClient {
                         fileWriter.write(fileBytes, 0, totalBytes);
                         fileWriter.close();
                         fileOut.close();
+                        Instant end = Instant.now();
+                        Duration timeElapsed = Duration.between(start, end);
+                        long timeElapsedNanos = timeElapsed.toNanos();
+                        System.out.println(timeElapsedNanos + " x 10^(-6) milliseconds \n");
+                        retreiveTime1Array[memeNum - 1] = timeElapsedNanos;
                     }
                 } catch (Exception e) {
                     System.out.println(e);
@@ -59,6 +77,9 @@ public class TCPClient {
             }
             out.writeUTF("bye");
             out.flush();
+            for (int i = 0; i < retreiveTime1Array.length; i++) {
+                System.out.println((i + 1) + " " + retreiveTime1Array[i]);
+            }
 
             // Close connection
             System.out.println("Exiting");
