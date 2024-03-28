@@ -1,4 +1,5 @@
 package cr;
+
 import java.io.*;
 import java.net.*;
 import java.time.Duration;
@@ -16,28 +17,28 @@ public class TCPClient {
     private BufferedReader reader = null;
     private int[] randArray = new int[10];
     private int receiveMemes = 0;
-    private static long[] retreiveTime1Array = new long[100]; //memeTimes
+    private static long[] retreiveTime1Array = new long[100]; // memeTimes
     private int retreiveTime1ArrayIndex = 0;
-    private  static long[] setupTime2Array = new long[10];
+    private static long[] setupTime2Array = new long[10];
     private int setupTime2ArrayIndex = 0;
- 
+
     private static long[] totalCompletionTimes = new long[10];
-    //private static long[] memeTimes = new long[100];
+    // private static long[] memeTimes = new long[100];
     private static int completionIndex = 0;
-    //private static int memeIndex = 0;
+    // private static int memeIndex = 0;
 
     public TCPClient(String hostname, int port) {
         try {
             // Setting up connection
             System.out.println("Attempting to connect to " + hostname + " on port " + port);
-            Instant startSetup = Instant.now(); //TCP setup time (2)
+            Instant startSetup = Instant.now(); // TCP setup time (2)
             socket = new Socket(hostname, port);
-            Instant endSetup = Instant.now(); //TCP setup time (2)
-            Duration timeElapsedSetup = Duration.between(startSetup, endSetup); //TCP setup time (2)
-            long timeElapsedNanosSetup = timeElapsedSetup.toNanos(); //TCP setup time (2)
-            setupTime2Array[setupTime2ArrayIndex] = timeElapsedNanosSetup; //TCP setup time (2)
-            setupTime2ArrayIndex++; //TCP setup time (2)
-            System.out.println(timeElapsedNanosSetup + " x 10^(-6) milliseconds"); 
+            Instant endSetup = Instant.now(); // TCP setup time (2)
+            Duration timeElapsedSetup = Duration.between(startSetup, endSetup); // TCP setup time (2)
+            long timeElapsedNanosSetup = timeElapsedSetup.toNanos(); // TCP setup time (2)
+            setupTime2Array[setupTime2ArrayIndex] = timeElapsedNanosSetup; // TCP setup time (2)
+            setupTime2ArrayIndex++; // TCP setup time (2)
+            System.out.println(timeElapsedNanosSetup + " x 10^(-6) milliseconds");
             System.out.println("Successfully connected to " + hostname + " on port " + port);
 
             // Initializing input/output streams
@@ -45,65 +46,69 @@ public class TCPClient {
             out = new DataOutputStream(socket.getOutputStream());
             reader = new BufferedReader(new InputStreamReader(System.in));
 
-            //Server sends "Hello!" to ensure connection is established before client can send a message
+            // Server sends "Hello!" to ensure connection is established before client can
+            // send a message
             inFromServer = in.readUTF();
             System.out.println("Received from server: " + inFromServer);
-            /* 
-            Instant start = Instant.now();
-            for (int i = 0; i < 5; i++) {
-                System.out.println("sleeping"); 
-            }  
-            Instant end = Instant.now();
-            Duration timeElapsed = Duration.between(start, end);
-            long timeElapsedMillis = timeElapsed.toNanos();
-            System.out.println(timeElapsedMillis + " x 10^(-6) milliseconds"); 
-            */
-            while(receiveMemes < 10) {
+            /*
+             * Instant start = Instant.now();
+             * for (int i = 0; i < 5; i++) {
+             * System.out.println("sleeping");
+             * }
+             * Instant end = Instant.now();
+             * Duration timeElapsed = Duration.between(start, end);
+             * long timeElapsedMillis = timeElapsed.toNanos();
+             * System.out.println(timeElapsedMillis + " x 10^(-6) milliseconds");
+             */
+            while (receiveMemes < 10) {
                 try {
-                    Instant start = Instant.now(); //meme retrieval (1)
+                    Instant start = Instant.now(); // meme retrieval (1)
                     int memeNum = getRandomNum();
                     System.out.print("Request server for: " + memeNum + "\n");
-                    //System.out.print("i: " + i + "\n");
-                    outToServer = String.valueOf(memeNum); //send number 1-10 to server
+                    // System.out.print("i: " + i + "\n");
+                    outToServer = String.valueOf(memeNum); // send number 1-10 to server
                     out.writeUTF(outToServer);
                     out.flush();
 
-                    inFromServer = in.readUTF();
+                    int fileSize = (int) (in.readLong());
+
                     System.out.println("Received server response: " + inFromServer);
-                    
-                    //Write joke file received from server to cr directory
-                    if (inFromServer.contains("Sending file")) {
-                        byte[] fileBytes = new byte[65000];
-                        String fileName = "./cr/meme" + String.valueOf(memeNum) + ".jpg";
-                        //FileOutputStream fileOut = new FileOutputStream(fileName, fileName.length());
-                        //FileOutputStream fileOut = new FileOutputStream("./cr/meme" + inFromServer.substring(inFromServer.length() - 9 , inFromServer.length()));
-                        FileOutputStream fileOut = new FileOutputStream(fileName);
-                        BufferedOutputStream fileWriter = new BufferedOutputStream(fileOut);
-                        int totalBytes = in.read(fileBytes, 0, fileBytes.length);
-                        fileWriter.write(fileBytes, 0, totalBytes);
-                        fileWriter.close();
-                        fileOut.close();
-                        
-                        Instant end = Instant.now(); //meme retrieval (1)
-                        Duration timeElapsed = Duration.between(start, end); //meme retrieval (1)
-                        long timeElapsedNanos = timeElapsed.toNanos(); //meme retrieval (1)
-                        System.out.println(timeElapsedNanos + " x 10^(-6) milliseconds \n"); //meme retrieval (1)
-                        retreiveTime1Array[retreiveTime1ArrayIndex] = timeElapsedNanos; //meme retrieval (1)
-                        retreiveTime1ArrayIndex++; //meme retrieval (1)
-                        totalCompletionTimes[completionIndex] += timeElapsedNanos; //total time for 10 meme retreival
-                    }
+
+                    // Write joke file received from server to cr directory
+
+                    byte[] fileBytes = new byte[65000];
+                    String fileName = "./cr/meme" + String.valueOf(memeNum) + ".jpg";
+                    // FileOutputStream fileOut = new FileOutputStream(fileName, fileName.length());
+                    // FileOutputStream fileOut = new FileOutputStream("./cr/meme" +
+                    // inFromServer.substring(inFromServer.length() - 9 , inFromServer.length()));
+                    FileOutputStream fileOut = new FileOutputStream(fileName);
+                    BufferedOutputStream fileWriter = new BufferedOutputStream(fileOut);
+                    int totalBytes = in.read(fileBytes, 0, fileBytes.length);
+                    fileWriter.write(fileBytes, 0, totalBytes);
+                    fileWriter.close();
+                    fileOut.close();
+
+                    Instant end = Instant.now(); // meme retrieval (1)
+                    Duration timeElapsed = Duration.between(start, end); // meme retrieval (1)
+                    long timeElapsedNanos = timeElapsed.toNanos(); // meme retrieval (1)
+                    System.out.println(timeElapsedNanos + " x 10^(-6) milliseconds \n"); // meme retrieval (1)
+                    retreiveTime1Array[retreiveTime1ArrayIndex] = timeElapsedNanos; // meme retrieval (1)
+                    retreiveTime1ArrayIndex++; // meme retrieval (1)
+                    totalCompletionTimes[completionIndex] += timeElapsedNanos; // total time for 10 meme retreival
+
                 } catch (Exception e) {
                     System.out.println(e);
                 }
             }
-                out.writeUTF("bye");
-                out.flush();
-            
-            /* 
-            for (int i = 0; i < retreiveTime1Array.length; i++) {
-                System.out.println((i + 1) + " " + retreiveTime1Array[i]);
-            } */
-            
+            out.writeUTF("bye");
+            out.flush();
+
+            /*
+             * for (int i = 0; i < retreiveTime1Array.length; i++) {
+             * System.out.println((i + 1) + " " + retreiveTime1Array[i]);
+             * }
+             */
+
             // Close connection
             System.out.println("Exiting");
             out.close();
@@ -118,17 +123,17 @@ public class TCPClient {
     public int getRandomNum() {
         int min = 0;
         int max = 10;
-        int num = min + (int)(Math.random() * (max - min)+1);
+        int num = min + (int) (Math.random() * (max - min) + 1);
 
         while (randArray[num - 1] == 1) {
-            num = min + (int)(Math.random() * (max - min)+1);
+            num = min + (int) (Math.random() * (max - min) + 1);
         }
         randArray[num - 1] = 1;
 
         receiveMemes++;
         return num;
     }
-     
+
     public static void getTestStats() {
         LongSummaryStatistics memeStats = Arrays.stream(retreiveTime1Array).summaryStatistics();
         LongSummaryStatistics totalStats = Arrays.stream(totalCompletionTimes).summaryStatistics();
@@ -170,18 +175,20 @@ public class TCPClient {
         System.out.println("Average: " + tcpStats.getAverage() + " nanoseconds");
         System.out.println("Standard Deviation: " + sdTCP + " nanoseconds");
     }
+
     public static void main(String[] args) {
         try {
             String hostname = args[0];
             int port = Integer.valueOf(args[1]);
-            //Call client function with given port and hostname arguments to initialize client/client socket
+            // Call client function with given port and hostname arguments to initialize
+            // client/client socket
             for (int i = 0; i < 10; i++) {
                 TimeUnit.SECONDS.sleep(1);
                 TCPClient client = new TCPClient(hostname, port);
                 completionIndex++;
             }
             getTestStats();
-            
+
         } catch (Exception e) {
             System.out.println(e);
             System.exit(-1);

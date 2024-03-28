@@ -1,4 +1,5 @@
 package sr;
+
 import java.io.*;
 import java.lang.*;
 import java.net.*;
@@ -23,19 +24,20 @@ public class TCPServer {
             System.out.println("Created server on port " + port);
 
             socket = serverSocket.accept();
-            System.out.println("Got connection address from " + socket.getInetAddress().toString() + " on port " + port);
+            System.out
+                    .println("Got connection address from " + socket.getInetAddress().toString() + " on port " + port);
 
             // Initializing input/output streams
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
             out.writeUTF("Hello!");
-            
+
             boolean requestedJoke = false;
             String fileName = "";
 
             while (!clientInput.equals("bye")) {
                 try {
-                    Instant start = Instant.now(); //local retreival (3)
+                    Instant start = Instant.now(); // local retreival (3)
                     clientInput = in.readUTF();
                     System.out.println("Client requested: " + clientInput);
 
@@ -100,8 +102,9 @@ public class TCPServer {
 
                     // Send desired file to client
                     if (requestedJoke == true) {
-                        out.writeUTF("Sending file " + fileName.substring(3, fileName.length()));
                         File jokeFile = new File(fileName);
+                        long fileSize = jokeFile.length();
+                        out.writeLong(fileSize);
                         byte[] fileBytes = new byte[(int) jokeFile.length()];
                         FileInputStream fileIn = new FileInputStream(jokeFile);
                         BufferedInputStream fileReader = new BufferedInputStream(fileIn);
@@ -114,12 +117,12 @@ public class TCPServer {
                         fileName = "";
                         requestedJoke = false;
 
-                        Instant end = Instant.now(); //local retreival (3)
-                        Duration timeElapsed = Duration.between(start, end); //local retreival (3)
-                        long timeElapsedNanos = timeElapsed.toNanos(); //local retreival (3)
-                        System.out.println(timeElapsedNanos + " x 10^(-6) milliseconds \n"); //local retreival (3)
-                        retreiveTime3Array[retreiveTime3ArrayIndex] = timeElapsedNanos; //local retreival (3)
-                        retreiveTime3ArrayIndex++; //local retreival (3)
+                        Instant end = Instant.now(); // local retreival (3)
+                        Duration timeElapsed = Duration.between(start, end); // local retreival (3)
+                        long timeElapsedNanos = timeElapsed.toNanos(); // local retreival (3)
+                        System.out.println(timeElapsedNanos + " x 10^(-6) milliseconds \n"); // local retreival (3)
+                        retreiveTime3Array[retreiveTime3ArrayIndex] = timeElapsedNanos; // local retreival (3)
+                        retreiveTime3ArrayIndex++; // local retreival (3)
                     }
                 } catch (Exception e) {
                     System.out.println(e);
@@ -127,7 +130,8 @@ public class TCPServer {
             }
 
             // Close connection
-            System.out.println("Received disconnect signal from client address " + socket.getInetAddress().toString() + " on port " + port);
+            System.out.println("Received disconnect signal from client address " + socket.getInetAddress().toString()
+                    + " on port " + port);
             System.out.println("Exiting");
             out.writeUTF("Disconnected");
             in.close();
@@ -155,15 +159,17 @@ public class TCPServer {
         System.out.println("Average: " + memeStats.getAverage() + " nanoseconds");
         System.out.println("Standard Deviation: " + sdMemes + " nanoseconds");
     }
+
     public static void main(String[] args) {
         try {
             int port = Integer.valueOf(args[0]);
-            //Call server function with given port argument to initialize server/server sockets
+            // Call server function with given port argument to initialize server/server
+            // sockets
             for (int i = 0; i < 10; i++) {
                 TCPServer s = new TCPServer(port);
             }
             getTestStats();
-            
+
         } catch (Exception e) {
             System.out.println("Failed to capture command line arguments");
             System.exit(-1);
