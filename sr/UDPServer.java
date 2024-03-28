@@ -69,7 +69,7 @@ public class UDPServer {
                 socket.send(sendPacket);
                 long endProcess = System.nanoTime();
                 System.out.println("Time to resolve meme request " + sentence + ": " + (endProcess - startProcess) + " nanoseconds");
-                sendMemeTimes[sendMemeIndex] = endProcess = startProcess;
+                sendMemeTimes[sendMemeIndex] = endProcess - startProcess;
                 sendMemeIndex++;
                 sentMemes++;
             }
