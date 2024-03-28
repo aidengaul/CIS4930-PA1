@@ -3,6 +3,8 @@ package sr;
 import java.io.*;
 import java.lang.*;
 import java.net.*;
+import java.util.Arrays;
+import java.util.LongSummaryStatistics;
 
 public class UDPServer {
     private DatagramSocket socket = null;
@@ -11,6 +13,8 @@ public class UDPServer {
     private DataOutputStream out = null;
     private String clientInput = "";
     private int sentMemes = 0;
+    private static long[] sendMemeTimes = new long[100];
+    private static int sendMemeIndex = 0;
 
     public UDPServer(int port) {
         try {
@@ -21,6 +25,7 @@ public class UDPServer {
             while (sentMemes < 10) {
                 DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
                 socket.receive(receivePacket);
+                long startProcess = System.nanoTime();
                 String sentence = new String(receivePacket.getData(), 0, receivePacket.getLength());
 
                 InetAddress IPAddress = receivePacket.getAddress();
@@ -62,6 +67,10 @@ public class UDPServer {
                 }
                 DatagramPacket sendPacket = new DatagramPacket(sendData, (int) file.length(), IPAddress, clientPort);
                 socket.send(sendPacket);
+                long endProcess = System.nanoTime();
+                System.out.println("Time to resolve meme request " + sentence + ": " + (endProcess - startProcess) + " nanoseconds");
+                sendMemeTimes[sendMemeIndex] = endProcess = startProcess;
+                sendMemeIndex++;
                 sentMemes++;
             }
            
@@ -76,6 +85,22 @@ public class UDPServer {
         }
     }
 
+    public static void getTestStats() {
+        LongSummaryStatistics memeStats = Arrays.stream(sendMemeTimes).summaryStatistics();
+        double sdMemes = 0;
+
+        for (long num : sendMemeTimes) {
+            sdMemes += Math.pow(num - memeStats.getAverage(), 2);
+        }
+        sdMemes = Math.sqrt(sdMemes / 100);
+
+        System.out.println("Summary statistics for sending an image across 10 trials:");
+        System.out.println("Min: " + memeStats.getMin() + " nanoseconds");
+        System.out.println("Max: " + memeStats.getMax() + " nanoseconds");
+        System.out.println("Average: " + memeStats.getAverage() + " nanoseconds");
+        System.out.println("Standard Deviation: " + sdMemes + " nanoseconds");
+    }
+
     public static void main(String[] args) {
         try {
             int port = Integer.valueOf(args[0]);
@@ -84,6 +109,7 @@ public class UDPServer {
             for (int i = 0; i < 10; i++) {
                 UDPServer s = new UDPServer(port);
             }
+            getTestStats();
         } catch (Exception e) {
             System.out.println("Failed to capture command line arguments");
             System.exit(-1);
