@@ -18,9 +18,9 @@ public class TCPClient {
     private int[] randArray = new int[10];
     private int receiveMemes = 0;
     private static long[] retreiveTime1Array = new long[100]; // memeTimes
-    private int retreiveTime1ArrayIndex = 0;
+    private static int retreiveTime1ArrayIndex = 0;
     private static long[] setupTime2Array = new long[10];
-    private int setupTime2ArrayIndex = 0;
+    private static int setupTime2ArrayIndex = 0;
 
     private static long[] totalCompletionTimes = new long[10];
     // private static long[] memeTimes = new long[100];

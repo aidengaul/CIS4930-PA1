@@ -15,7 +15,7 @@ public class TCPServer {
     private DataOutputStream out = null;
     private String clientInput = "";
     private static long[] retreiveTime3Array = new long[100];
-    private int retreiveTime3ArrayIndex = 0;
+    private static int retreiveTime3ArrayIndex = 0;
 
     public TCPServer(int port) {
         try {
