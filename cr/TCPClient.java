@@ -13,7 +13,10 @@ public class TCPClient {
     private BufferedReader reader = null;
     private int[] randArray = new int[10];
     private int receiveMemes = 0;
-    private long[] retreiveTime1Array = new long[10];
+    private long[] retreiveTime1Array = new long[100];
+    private int retreiveTime1ArrayIndex = 0;
+    private long[] setupTime2Array = new long[10];
+    private int setupTime2ArrayIndex = 0;
 
     public TCPClient(String hostname, int port) {
         try {
@@ -23,8 +26,10 @@ public class TCPClient {
             socket = new Socket(hostname, port);
             Instant endSetup = Instant.now();
             Duration timeElapsedSetup = Duration.between(startSetup, endSetup);
-            long timeElapsedMillisSetup = timeElapsedSetup.toNanos();
-            System.out.println(timeElapsedMillisSetup + " x 10^(-6) milliseconds"); 
+            long timeElapsedNanosSetup = timeElapsedSetup.toNanos();
+            setupTime2Array[setupTime2ArrayIndex] = timeElapsedNanosSetup;
+            setupTime2ArrayIndex++;
+            System.out.println(timeElapsedNanosSetup + " x 10^(-6) milliseconds"); 
             System.out.println("Successfully connected to " + hostname + " on port " + port);
 
             // Initializing input/output streams
@@ -70,11 +75,13 @@ public class TCPClient {
                         fileWriter.write(fileBytes, 0, totalBytes);
                         fileWriter.close();
                         fileOut.close();
+                        
                         Instant end = Instant.now();
                         Duration timeElapsed = Duration.between(start, end);
                         long timeElapsedNanos = timeElapsed.toNanos();
                         System.out.println(timeElapsedNanos + " x 10^(-6) milliseconds \n");
-                        retreiveTime1Array[memeNum - 1] = timeElapsedNanos;
+                        retreiveTime1Array[retreiveTime1ArrayIndex] = timeElapsedNanos;
+                        retreiveTime1ArrayIndex++;
                     }
                 } catch (Exception e) {
                     System.out.println(e);

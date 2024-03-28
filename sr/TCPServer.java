@@ -2,6 +2,8 @@ package sr;
 import java.io.*;
 import java.lang.*;
 import java.net.*;
+import java.time.Duration;
+import java.time.Instant;
 
 public class TCPServer {
     private Socket socket = null;
@@ -9,6 +11,8 @@ public class TCPServer {
     private DataInputStream in = null;
     private DataOutputStream out = null;
     private String clientInput = "";
+    private long[] retreiveTime3Array = new long[100];
+    private int retreiveTime3ArrayIndex = 0;
 
     public TCPServer(int port) {
         try {
@@ -29,6 +33,7 @@ public class TCPServer {
 
             while (!clientInput.equals("bye")) {
                 try {
+                    Instant start = Instant.now();
                     clientInput = in.readUTF();
                     System.out.println("Client requested: " + clientInput);
 
@@ -106,6 +111,13 @@ public class TCPServer {
 
                         fileName = "";
                         requestedJoke = false;
+
+                        Instant end = Instant.now();
+                        Duration timeElapsed = Duration.between(start, end);
+                        long timeElapsedNanos = timeElapsed.toNanos();
+                        System.out.println(timeElapsedNanos + " x 10^(-6) milliseconds \n");
+                        retreiveTime3Array[retreiveTime3ArrayIndex] = timeElapsedNanos;
+                        retreiveTime3ArrayIndex++;
                     }
                 } catch (Exception e) {
                     System.out.println(e);
