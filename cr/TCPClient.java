@@ -19,7 +19,12 @@ public class TCPClient {
         try {
             // Setting up connection
             System.out.println("Attempting to connect to " + hostname + " on port " + port);
+            Instant startSetup = Instant.now();
             socket = new Socket(hostname, port);
+            Instant endSetup = Instant.now();
+            Duration timeElapsedSetup = Duration.between(startSetup, endSetup);
+            long timeElapsedMillisSetup = timeElapsedSetup.toNanos();
+            System.out.println(timeElapsedMillisSetup + " x 10^(-6) milliseconds"); 
             System.out.println("Successfully connected to " + hostname + " on port " + port);
 
             // Initializing input/output streams
