@@ -10,6 +10,7 @@ public class TCPClient {
     private String outToServer = "";
     private BufferedReader reader = null;
     private int[] randArray = new int[10];
+    private int receiveMemes = 0;
 
     public TCPClient(String hostname, int port) {
         try {
@@ -27,10 +28,11 @@ public class TCPClient {
             inFromServer = in.readUTF();
             System.out.println("Received from server: " + inFromServer);
 
-            for (int i = 0; i < 10; i++) {
+            while(receiveMemes < 10) {
                 try {
                     int memeNum = getRandomNum();
                     System.out.print("Request server for: " + memeNum + "\n");
+                    //System.out.print("i: " + i + "\n");
                     outToServer = String.valueOf(memeNum); //send number 1-10 to server
                     out.writeUTF(outToServer);
                     out.flush();
@@ -41,7 +43,10 @@ public class TCPClient {
                     //Write joke file received from server to cr directory
                     if (inFromServer.contains("Sending file")) {
                         byte[] fileBytes = new byte[65000];
-                        FileOutputStream fileOut = new FileOutputStream("./cr/" + inFromServer.substring(inFromServer.length() - 9 , inFromServer.length()));
+                        String fileName = "./cr/meme" + String.valueOf(memeNum) + ".jpg";
+                        //FileOutputStream fileOut = new FileOutputStream(fileName, fileName.length());
+                        //FileOutputStream fileOut = new FileOutputStream("./cr/meme" + inFromServer.substring(inFromServer.length() - 9 , inFromServer.length()));
+                        FileOutputStream fileOut = new FileOutputStream(fileName);
                         BufferedOutputStream fileWriter = new BufferedOutputStream(fileOut);
                         int totalBytes = in.read(fileBytes, 0, fileBytes.length);
                         fileWriter.write(fileBytes, 0, totalBytes);
@@ -67,15 +72,16 @@ public class TCPClient {
     }
 
     public int getRandomNum() {
-        int min = 1;
+        int min = 0;
         int max = 10;
-        int num = min + (int)(Math.random() * (max - min));
+        int num = min + (int)(Math.random() * (max - min)+1);
 
-        while (randArray[num] == 1) {
-            num = min + (int)(Math.random() * (max - min));
+        while (randArray[num - 1] == 1) {
+            num = min + (int)(Math.random() * (max - min)+1);
         }
-        randArray[num] = 1;
+        randArray[num - 1] = 1;
 
+        receiveMemes++;
         return num;
     }
 
