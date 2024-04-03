@@ -110,6 +110,7 @@ public class TCPClient {
              */
 
             // Close connection
+            TimeUnit.SECONDS.sleep(1);
             System.out.println("Exiting");
             out.close();
             in.close();
